@@ -9,8 +9,8 @@ class Food():
 
     def randomize_position(self, grid):
         while 1:
-            self.position = (random.randint(0, g.grid_size-1), random.randint(0, g.grid_size-1))
-            if grid[self.position[0]][self.position[1]] != g.PLAYER:
+            self.position = (random.randint(0, len(grid) - 1), random.randint(0, len(grid) - 1))
+            if grid[self.position[0]][self.position[1]] == g.EMPTY:
                 break
 
     def draw(self, surface):

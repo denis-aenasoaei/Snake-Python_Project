@@ -1,19 +1,22 @@
 import pygame
 import sys
-import random
 import GLOBALS as g
 
 class Snake:
-    def __init__(self, grid):
-        self.length = 2
+    def __init__(self, grid, initialSize):
+        self.initialSize = initialSize
+        self.length = initialSize
         self.positions = []
-        for i in range(g.initial_size):
-            self.positions.append(((g.grid_size // 2) - i, (g.grid_size // 2)))
-            grid[self.positions[i][0]][self.positions[i][1]] = g.PLAYER
+
+        self.initializeSnakeOnGrid(grid)
 
         self.direction = g.right
         self.color = (17, 24, 47)
-        self.score = 0
+
+    def initializeSnakeOnGrid(self, grid):
+        for i in range(self.initialSize):
+            self.positions.append(((len(grid) // 2) - i, (len(grid) // 2)))
+            grid[self.positions[i][0]][self.positions[i][1]] = g.PLAYER
 
     def get_head_position(self):
         return self.positions[0]
@@ -29,8 +32,7 @@ class Snake:
         x, y = self.direction
         new = (cur[0] + x, cur[1] + y)
 
-        if len(self.positions) > 2 and new in self.positions[2:] or not(0 <= new[0] < g.grid_size) \
-                or not(0 <= new[1] < g.grid_size):
+        if not(0 <= new[0] < len(grid)) or not(0 <= new[1] < len(grid)) or grid[new[0]][new[1]] != g.EMPTY:
             self.reset()
             return 0
         else:
@@ -38,18 +40,13 @@ class Snake:
             grid[new[0]][new[1]] = g.PLAYER
             if len(self.positions) > self.length:
                 tail = self.positions.pop()
-                grid[tail[0]][tail[1]] = -1
+                grid[tail[0]][tail[1]] = g.EMPTY
         return 1
 
-
     def reset(self):
-        self.length = g.initial_size
+        self.length = self.initialSize
         self.positions = []
-        for i in range(g.initial_size):
-            self.positions.append(((g.grid_size // 2) - i, (g.grid_size // 2)))
         self.direction = g.right
-        self.score = 0
-        #add max score check
 
     def draw(self, surface):
         for p in self.positions:

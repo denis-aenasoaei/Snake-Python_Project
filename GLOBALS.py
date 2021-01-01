@@ -12,5 +12,6 @@ left = (-1, 0)
 right = (1, 0)
 
 PLAYER = 1
+EMPTY = -1
+WALL = 2
 
-initial_size = 2
