@@ -7,6 +7,7 @@
       <change beforePath="$PROJECT_DIR$/GLOBALS.py" beforeDir="false" afterPath="$PROJECT_DIR$/GLOBALS.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Game.py" beforeDir="false" afterPath="$PROJECT_DIR$/Game.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Snake.py" beforeDir="false" afterPath="$PROJECT_DIR$/Snake.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/settings.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,22 +75,22 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="463" y="119" key="FileChooserDialogImpl/0.0.1366.728@0.0.1366.728" timestamp="1609364574314" />
-    <state width="1345" height="179" key="GridCell.Tab.0.bottom" timestamp="1609544271339">
+    <state width="1345" height="179" key="GridCell.Tab.0.bottom" timestamp="1610430232533">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="179" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1609544271339" />
-    <state width="1345" height="179" key="GridCell.Tab.0.center" timestamp="1609544271338">
+    <state width="1345" height="179" key="GridCell.Tab.0.bottom/0.0.1366.728@0.0.1366.728" timestamp="1610430232533" />
+    <state width="1345" height="179" key="GridCell.Tab.0.center" timestamp="1610430232533">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="179" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1609544271338" />
-    <state width="1345" height="179" key="GridCell.Tab.0.left" timestamp="1609544271338">
+    <state width="1345" height="179" key="GridCell.Tab.0.center/0.0.1366.728@0.0.1366.728" timestamp="1610430232533" />
+    <state width="1345" height="179" key="GridCell.Tab.0.left" timestamp="1610430232533">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="179" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1609544271338" />
-    <state width="1345" height="179" key="GridCell.Tab.0.right" timestamp="1609544271338">
+    <state width="1345" height="179" key="GridCell.Tab.0.left/0.0.1366.728@0.0.1366.728" timestamp="1610430232533" />
+    <state width="1345" height="179" key="GridCell.Tab.0.right" timestamp="1610430232533">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
-    <state width="1345" height="179" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1609544271338" />
+    <state width="1345" height="179" key="GridCell.Tab.0.right/0.0.1366.728@0.0.1366.728" timestamp="1610430232533" />
     <state x="184" y="6" key="SettingsEditor" timestamp="1609364691848">
       <screen x="0" y="0" width="1366" height="728" />
     </state>
@@ -98,5 +99,9 @@
       <screen x="0" y="0" width="1366" height="728" />
     </state>
     <state x="379" y="188" key="com.intellij.ide.util.TipDialog/0.0.1366.728@0.0.1366.728" timestamp="1609527997399" />
+    <state x="314" y="61" width="737" height="606" key="find.popup" timestamp="1610392138813">
+      <screen x="0" y="0" width="1366" height="728" />
+    </state>
+    <state x="314" y="61" width="737" height="606" key="find.popup/0.0.1366.728@0.0.1366.728" timestamp="1610392138813" />
   </component>
 </project>

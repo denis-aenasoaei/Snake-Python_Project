@@ -2,16 +2,14 @@ import pygame
 import sys
 import GLOBALS as g
 
+
 class Snake:
-    def __init__(self, grid, initialSize):
-        self.initialSize = initialSize
-        self.length = initialSize
+    def __init__(self, grid, initial_size):
+        self.initialSize = initial_size
+        self.length = initial_size
         self.positions = []
-
         self.initializeSnakeOnGrid(grid)
-
         self.direction = g.right
-        self.color = (17, 24, 47)
 
     def initializeSnakeOnGrid(self, grid):
         for i in range(self.initialSize):
@@ -21,18 +19,18 @@ class Snake:
     def get_head_position(self):
         return self.positions[0]
 
-    def turn(self, dir):
-        if self.length > 1 and (dir[0] * -1, dir[1] * -1) == self.direction:
+    def turn(self, direction):
+        if self.length > 1 and (direction[0] * -1, direction[1] * -1) == self.direction:
             return
         else:
-            self.direction = dir
+            self.direction = direction
 
     def move(self, grid):
         cur = self.get_head_position()
         x, y = self.direction
         new = (cur[0] + x, cur[1] + y)
 
-        if not(0 <= new[0] < len(grid)) or not(0 <= new[1] < len(grid)) or grid[new[0]][new[1]] != g.EMPTY:
+        if not(0 <= new[0] < len(grid)) or not(0 <= new[1] < len(grid)) or grid[new[0]][new[1]] in [g.PLAYER, g.WALL]:
             self.reset()
             return 0
         else:
@@ -48,24 +46,25 @@ class Snake:
         self.positions = []
         self.direction = g.right
 
-    def draw(self, surface):
-        for p in self.positions:
-            r = pygame.Rect((p[0] * g.block_width, p[1] * g.block_height), (g.block_width, g.block_height))
-            pygame.draw.rect(surface, self.color, r)
-            pygame.draw.rect(surface, (93, 216, 228), r, 1)
-
     def handle_keys(self):
+        handled = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            elif event.type == pygame.KEYDOWN:
+            elif event.type == pygame.KEYDOWN and not handled:
                 if event.key == pygame.K_UP:
                     self.turn(g.up)
+                    handled = True
                 elif event.key == pygame.K_DOWN:
                     self.turn(g.down)
+                    handled = True
                 elif event.key == pygame.K_LEFT:
                     self.turn(g.left)
+                    handled = True
                 elif event.key == pygame.K_RIGHT:
                     self.turn(g.right)
+                    handled = True
+            elif handled and event.key in (pygame.K_DOWN, pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT):
+                pygame.event.post(event)
                 break
