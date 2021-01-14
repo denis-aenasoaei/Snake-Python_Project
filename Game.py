@@ -34,8 +34,28 @@ class Game:
             with open(path_to_json_settings) as f:
                 self.settings = json.load(f)
         except TypeError:   # If file is not found, initialize with some basic settings
-            self.settings = {"screen_height": 480, "screen_width": 480, "grid_size": 20, "start_size": 3,
-                             "walls": []}
+            self.settings = {"screen_height": 480, "screen_width": 480, "grid_size": 20, "start_size": 3, "walls": []}
+        except FileNotFoundError:
+            self.settings = {"screen_height": 480, "screen_width": 480, "grid_size": 20, "start_size": 3, "walls": []}
+
+        # make sure that the values are set no matter what (i.e. json given as parameter, but does not have attributes)
+        if "screen_height" not in self.settings:
+            self.settings["screen_height"] = 480
+        if "screen_width" not in self.settings:
+            self.settings["screen_width"] = 480
+        if "grid_size" not in self.settings:
+            self.settings["grid_size"] = 20
+        if "start_size" not in self.settings:
+            self.settings["start_size"] = 480
+        if "walls" not in self.settings:
+            self.settings["walls"] = []
+        if "start_size" not in self.settings:
+            self.settings["start_size"] = 2
+
+        self.settings["grid_size"] = min(80, self.settings["grid_size"])
+        self.settings["screen_height"] = min(768, self.settings["screen_height"])
+        self.settings["screen_width"] = min(768, self.settings["screen_width"])
+
         self.base_grid = self.init_grid()    # Have a basic grid so we won't reinitialize it every time the player dies
         self.grid = deepcopy(self.base_grid)
         self.snake = Snake(self.grid, self.settings['start_size'])
