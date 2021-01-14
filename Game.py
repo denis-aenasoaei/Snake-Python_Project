@@ -19,13 +19,14 @@ class Game:
     def __init__(self, path_to_json_settings=None):
         """
         Initializes a game object
-        :param path_to_json_settings: optional
+        :param path_to_json_settings: string, optional
             Path to a json file containing game settings as follows:
                 - screen_height in pixels
                 - screen_width in pixels
                 - grid_size, size of the board
                 - start_size, initial size of the snake
                 - walls, list of lists, with x and y coordinates of blocks to be blocked
+        Will use default values for above variables if not provided.
         """
         self.score = 0
         self.maxScore = 0
@@ -34,11 +35,9 @@ class Game:
                 self.settings = json.load(f)
         except TypeError:   # If file is not found, initialize with some basic settings
             self.settings = {"screen_height": 480, "screen_width": 480, "grid_size": 20, "start_size": 3,
-                             "walls": [[15, 5], [15, 6], [15, 7], [15, 8], [15, 9], [15, 10], [15, 11], [15, 12],
-                                       [15, 13], [15, 14], [15, 15], [5, 5], [5, 6], [5, 7], [5, 8], [5, 9],
-                                       [5, 10], [5, 11], [5, 12], [5, 13], [5, 14], [5, 15]]}
-        self.baseGrid = self.init_grid()    # Have a basic grid so we won't reinitialize it every time the player dies
-        self.grid = deepcopy(self.baseGrid)
+                             "walls": []}
+        self.base_grid = self.init_grid()    # Have a basic grid so we won't reinitialize it every time the player dies
+        self.grid = deepcopy(self.base_grid)
         self.snake = Snake(self.grid, self.settings['start_size'])
         self.food = Food()
 
@@ -54,13 +53,13 @@ class Game:
         self.block_height = self.settings["screen_height"] / self.settings["grid_size"]
         self.surface = pygame.Surface(self.screen.get_size())
         self.surface = self.surface.convert()
-        self.font = pygame.font.SysFont("monospace", 18)
+        self.font = pygame.font.SysFont("monospace", 20)
 
     def init_grid(self):
         """
         Initializes a two dimensional array used as a board for the game.
         :return:
-            2D List of value -1 if the grid is not covered by a wall and value 2 otherwise.
+            2D List of size grid_size x grid_size of value EMPTY if the grid is not covered by a wall and value WALL otherwise.
         """
         grid = []
         for i in range(self.settings['grid_size']):
@@ -75,7 +74,7 @@ class Game:
     def draw_grid(self, darken=1):
         """
         Draws the grid onto the screen, based on the values of grid attribute.
-        :param darken: float, optional, value between 0 and 1
+        :param darken: float, optional, with value between 0 and 1
             Darkens the shade of the color by the specified amount (i.e. a value of 0.5 will make the grid 50% darker)
         """
         if not(0 < darken < 1):
@@ -116,7 +115,7 @@ class Game:
                     end_game()
                 else:
                     self.score = 0
-                    self.grid = deepcopy(self.baseGrid)
+                    self.grid = deepcopy(self.base_grid)
                     self.snake.initialize_snake_on_grid(self.grid)
                     self.food.randomize_position(self.grid)
 
@@ -136,8 +135,8 @@ class Game:
 
     def handle_keys(self):
         """
-        Handles user input.
-        Valid keystrokes: Up, Down, Left and Right arrows
+        Handles user input, changing the snake direction based on the key pressed.
+        Valid keystrokes: Up, Down, Left and Right arrows.
         """
         handled = 0
         for event in pygame.event.get():
@@ -165,7 +164,7 @@ class Game:
         Initializes the menu that will appear after the player loses a round, giving an option of either keep playing
             or quitting the game.
         :return: 0, in case the player wants to quit
-                 1, otherwise
+                 1, in case the player wants to keep playing
         """
         retry_button = pygame.Rect((self.settings["screen_width"] / 2 - 75, 170), (150, 25))
         play_again = self.font.render('Play Again!', True, (255, 250, 106))
