@@ -4,7 +4,7 @@ from Snake import Snake
 from Food import Food
 import json
 from copy import deepcopy
-from sys import exit
+from sys import exit, argv
 
 
 def end_game():
@@ -32,7 +32,7 @@ class Game:
         try:
             with open(path_to_json_settings) as f:
                 self.settings = json.load(f)
-        except FileNotFoundError:   # If file is not found, initialize with some basic settings
+        except TypeError:   # If file is not found, initialize with some basic settings
             self.settings = {"screen_height": 480, "screen_width": 480, "grid_size": 20, "start_size": 3,
                              "walls": [[15, 5], [15, 6], [15, 7], [15, 8], [15, 9], [15, 10], [15, 11], [15, 12],
                                        [15, 13], [15, 14], [15, 15], [5, 5], [5, 6], [5, 7], [5, 8], [5, 9],
@@ -208,5 +208,9 @@ class Game:
                         return 0
 
 
-game = Game("settings.json")
-game.run_game()
+if __name__ == "__main__":
+    if len(argv) == 2:
+        game = Game(argv[1])
+    else:
+        game = Game()
+    game.run_game()
