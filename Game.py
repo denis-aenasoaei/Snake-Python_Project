@@ -19,7 +19,7 @@ class Game:
     def __init__(self, path_to_json_settings=None):
         """
         Initializes a game object
-        :param path_to_json_settings: optional
+        :param path_to_json_settings: string, optional
             Path to a json file containing game settings as follows:
                 - screen_height in pixels
                 - screen_width in pixels
@@ -37,8 +37,8 @@ class Game:
                              "walls": [[15, 5], [15, 6], [15, 7], [15, 8], [15, 9], [15, 10], [15, 11], [15, 12],
                                        [15, 13], [15, 14], [15, 15], [5, 5], [5, 6], [5, 7], [5, 8], [5, 9],
                                        [5, 10], [5, 11], [5, 12], [5, 13], [5, 14], [5, 15]]}
-        self.baseGrid = self.init_grid()    # Have a basic grid so we won't reinitialize it every time the player dies
-        self.grid = deepcopy(self.baseGrid)
+        self.base_grid = self.init_grid()    # Have a basic grid so we won't reinitialize it every time the player dies
+        self.grid = deepcopy(self.base_grid)
         self.snake = Snake(self.grid, self.settings['start_size'])
         self.food = Food()
 
@@ -54,7 +54,7 @@ class Game:
         self.block_height = self.settings["screen_height"] / self.settings["grid_size"]
         self.surface = pygame.Surface(self.screen.get_size())
         self.surface = self.surface.convert()
-        self.font = pygame.font.SysFont("monospace", 18)
+        self.font = pygame.font.SysFont("monospace", 20)
 
     def init_grid(self):
         """
@@ -116,7 +116,7 @@ class Game:
                     end_game()
                 else:
                     self.score = 0
-                    self.grid = deepcopy(self.baseGrid)
+                    self.grid = deepcopy(self.base_grid)
                     self.snake.initialize_snake_on_grid(self.grid)
                     self.food.randomize_position(self.grid)
 
