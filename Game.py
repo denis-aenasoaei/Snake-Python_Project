@@ -143,7 +143,7 @@ class Game:
 
             if self.snake.get_head_position() == self.food.position:
                 self.snake.length += 1
-                self.score += 1
+                self.score += 2
                 self.food.randomize_position(self.grid)
                 if self.score > self.maxScore:
                     self.maxScore = self.score
