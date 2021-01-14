@@ -7,46 +7,81 @@ from copy import deepcopy
 from sys import exit
 
 
+def end_game():
+    """Closes the game and exits the program."""
+    pygame.quit()
+    exit()
+
+
 class Game:
-    def __init__(self, path_to_json):
+    """Game manager for the Snake game"""
+
+    def __init__(self, path_to_json_settings=None):
+        """
+        Initializes a game object
+        :param path_to_json_settings: optional
+            Path to a json file containing game settings as follows:
+                - screen_height in pixels
+                - screen_width in pixels
+                - grid_size, size of the board
+                - start_size, initial size of the snake
+                - walls, list of lists, with x and y coordinates of blocks to be blocked
+        """
         self.score = 0
         self.maxScore = 0
-
-        with open(path_to_json) as f:
-            self.settings = json.load(f)
-
-        self.baseGrid = self.init_grid()
+        try:
+            with open(path_to_json_settings) as f:
+                self.settings = json.load(f)
+        except FileNotFoundError:   # If file is not found, initialize with some basic settings
+            self.settings = {"screen_height": 480, "screen_width": 480, "grid_size": 20, "start_size": 3,
+                             "walls": [[15, 5], [15, 6], [15, 7], [15, 8], [15, 9], [15, 10], [15, 11], [15, 12],
+                                       [15, 13], [15, 14], [15, 15], [5, 5], [5, 6], [5, 7], [5, 8], [5, 9],
+                                       [5, 10], [5, 11], [5, 12], [5, 13], [5, 14], [5, 15]]}
+        self.baseGrid = self.init_grid()    # Have a basic grid so we won't reinitialize it every time the player dies
         self.grid = deepcopy(self.baseGrid)
-        self.snake = Snake(self.grid, self.settings['startSize'])
+        self.snake = Snake(self.grid, self.settings['start_size'])
         self.food = Food()
 
+        # code needed to make pygame work
         pygame.init()
         pygame.display.set_caption('Snake!')
-        snakeImage = pygame.image.load('snake-icon.png')
-        pygame.display.set_icon(snakeImage)
+        snake_image = pygame.image.load('snake-icon.png')
+        pygame.display.set_icon(snake_image)
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((self.settings["screen_width"], self.settings["screen_height"]),
                                               flags=pygame.SCALED, depth=32, vsync=True)
-        self.block_width = self.settings["screen_width"] / self.settings["gridSize"]
-        self.block_height = self.settings["screen_height"] / self.settings["gridSize"]
+        self.block_width = self.settings["screen_width"] / self.settings["grid_size"]
+        self.block_height = self.settings["screen_height"] / self.settings["grid_size"]
         self.surface = pygame.Surface(self.screen.get_size())
         self.surface = self.surface.convert()
         self.font = pygame.font.SysFont("monospace", 18)
 
     def init_grid(self):
+        """
+        Initializes a two dimensional array used as a board for the game.
+        :return:
+            2D List of value -1 if the grid is not covered by a wall and value 2 otherwise.
+        """
         grid = []
-        for i in range(self.settings['gridSize']):
+        for i in range(self.settings['grid_size']):
             grid.append([])
-            for j in range(self.settings['gridSize']):
+            for j in range(self.settings['grid_size']):
                 if [j, i] in self.settings['walls']:
                     grid[i].append(g.WALL)
                 else:
                     grid[i].append(g.EMPTY)
         return grid
 
-    def drawGrid(self, darken):
-        for x in range(0, int(self.settings['gridSize'])):
-            for y in range(0, int(self.settings['gridSize'])):
+    def draw_grid(self, darken=1):
+        """
+        Draws the grid onto the screen, based on the values of grid attribute.
+        :param darken: float, optional, value between 0 and 1
+            Darkens the shade of the color by the specified amount (i.e. a value of 0.5 will make the grid 50% darker)
+        """
+        if not(0 < darken < 1):
+            darken = 1
+        for x in range(0, int(self.settings['grid_size'])):
+            for y in range(0, int(self.settings['grid_size'])):
                 if self.grid[x][y] == g.EMPTY:
                     if (x + y) % 2 == 0:
                         r = pygame.Rect((x * self.block_width, y * self.block_height),
@@ -70,21 +105,22 @@ class Game:
                     pygame.draw.rect(self.surface, (223 * darken, 163 * darken, 49 * darken), r)
                     pygame.draw.rect(self.surface, (93, 216, 228), r, 1)
 
-    def runGame(self):
+    def run_game(self):
+        """Starts a game session."""
         self.food.randomize_position(self.grid)
         while True:
-            self.clock.tick(10)
-            self.snake.handle_keys()
+            self.clock.tick(8)
+            self.handle_keys()
             if not self.snake.move(self.grid):
-                if self.endGameDialog() == 0:
-                    exit()
+                if self.end_game_dialog() == 0:
+                    end_game()
                 else:
                     self.score = 0
                     self.grid = deepcopy(self.baseGrid)
-                    self.snake.initializeSnakeOnGrid(self.grid)
+                    self.snake.initialize_snake_on_grid(self.grid)
                     self.food.randomize_position(self.grid)
 
-            self.drawGrid(1)
+            self.draw_grid()
 
             if self.snake.get_head_position() == self.food.position:
                 self.snake.length += 1
@@ -98,7 +134,39 @@ class Game:
             self.screen.blit(score, (5, 10))
             pygame.display.update()
 
-    def endGameDialog(self):
+    def handle_keys(self):
+        """
+        Handles user input.
+        Valid keystrokes: Up, Down, Left and Right arrows
+        """
+        handled = 0
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                end_game()
+            elif event.type == pygame.KEYDOWN:
+                if handled and event.key in (pygame.K_DOWN, pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT):
+                    pygame.event.post(event)
+                    break
+                if event.key == pygame.K_UP:
+                    self.snake.turn(self.snake.up)
+                    handled = True
+                elif event.key == pygame.K_DOWN:
+                    self.snake.turn(self.snake.down)
+                    handled = True
+                elif event.key == pygame.K_LEFT:
+                    self.snake.turn(self.snake.left)
+                    handled = True
+                elif event.key == pygame.K_RIGHT:
+                    self.snake.turn(self.snake.right)
+                    handled = True
+
+    def end_game_dialog(self):
+        """
+        Initializes the menu that will appear after the player loses a round, giving an option of either keep playing
+            or quitting the game.
+        :return: 0, in case the player wants to quit
+                 1, otherwise
+        """
         retry_button = pygame.Rect((self.settings["screen_width"] / 2 - 75, 170), (150, 25))
         play_again = self.font.render('Play Again!', True, (255, 250, 106))
 
@@ -106,7 +174,7 @@ class Game:
         quit_text = self.font.render('Quit!', True, (255, 250, 106))
         while True:
             self.clock.tick(10)
-            self.drawGrid(0.4)  # darken shade for every block
+            self.draw_grid(0.4)  # darken shade for every block
             pygame.draw.rect(self.surface, (0, 0, 0), retry_button)
             pygame.draw.rect(self.surface, (0, 0, 0), quit_button)
             self.screen.blit(self.surface, (0, 0))
@@ -141,4 +209,4 @@ class Game:
 
 
 game = Game("settings.json")
-game.runGame()
+game.run_game()

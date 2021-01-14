@@ -1,31 +1,66 @@
-import pygame
-import sys
 import GLOBALS as g
 
 
 class Snake:
-    def __init__(self, grid, initial_size):
-        self.initialSize = initial_size
+
+    """Player class for the Snake! game"""
+    def __init__(self, grid, initial_size=2):
+        """
+        Initializes a new snake.
+        :param grid: List of lists of dimension NxN, with grid values.
+        :param initial_size: int, optional
+            The initial size the Snake should take values between 2 and half the grid size
+        """
+        if not(2 < initial_size < len(grid)//2):
+            initial_size = 2
+        # directions the snake can take
+        self.up = (0, -1)
+        self.down = (0, 1)
+        self.left = (-1, 0)
+        self.right = (1, 0)
+
+        self.initial_size = initial_size
         self.length = initial_size
         self.positions = []
-        self.initializeSnakeOnGrid(grid)
-        self.direction = g.right
+        self.initialize_snake_on_grid(grid)
+        self.direction = self.right
 
-    def initializeSnakeOnGrid(self, grid):
-        for i in range(self.initialSize):
+    def initialize_snake_on_grid(self, grid):
+        """
+        Places the snake onto a grid.
+        :param grid: The NxN grid that will be modified to contain the Snake
+        """
+        for i in range(self.initial_size):
             self.positions.append(((len(grid) // 2) - i, (len(grid) // 2)))
             grid[self.positions[i][0]][self.positions[i][1]] = g.PLAYER
 
     def get_head_position(self):
+        """
+        Gets the x and y coordinates of the snake head.
+        :return: Tuple of x and y board coordinates with the snake's head position
+        """
         return self.positions[0]
 
     def turn(self, direction):
+        """
+        Turns the snake direction.
+        :param direction: The direction to turn to.
+        :return: 0, if the turn in impossible (is not a 180° turn)
+                 1, otherwise
+        """
         if self.length > 1 and (direction[0] * -1, direction[1] * -1) == self.direction:
-            return
+            return 0
         else:
             self.direction = direction
+            return 1
 
     def move(self, grid):
+        """
+        Moves the snake in the direction described by direction attribute.
+        :param grid: The grid where the snake should be moved on
+        :return: 0, if the new position is not possible, resulting in the snake's death
+                 1, if the new position is valid
+        """
         cur = self.get_head_position()
         x, y = self.direction
         new = (cur[0] + x, cur[1] + y)
@@ -42,29 +77,7 @@ class Snake:
         return 1
 
     def reset(self):
-        self.length = self.initialSize
+        """Resets the snake's attributes to a base, making it ready for a new round."""
+        self.length = self.initial_size
         self.positions = []
-        self.direction = g.right
-
-    def handle_keys(self):
-        handled = 0
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            elif event.type == pygame.KEYDOWN and not handled:
-                if event.key == pygame.K_UP:
-                    self.turn(g.up)
-                    handled = True
-                elif event.key == pygame.K_DOWN:
-                    self.turn(g.down)
-                    handled = True
-                elif event.key == pygame.K_LEFT:
-                    self.turn(g.left)
-                    handled = True
-                elif event.key == pygame.K_RIGHT:
-                    self.turn(g.right)
-                    handled = True
-            elif handled and event.key in (pygame.K_DOWN, pygame.K_UP, pygame.K_LEFT, pygame.K_RIGHT):
-                pygame.event.post(event)
-                break
+        self.direction = self.right
